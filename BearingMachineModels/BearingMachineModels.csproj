@@ -45,6 +45,7 @@
     <Compile Include="CurrentSimulationCase.cs" />
     <Compile Include="PerformanceMeasures.cs" />
     <Compile Include="ProposedSimulationCase.cs" />
+    <Compile Include="SimSys.cs" />
     <Compile Include="SimulationSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeDistribution.cs" />

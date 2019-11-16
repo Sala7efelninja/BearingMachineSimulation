@@ -8,14 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BearingMachineTesting;
-
+using BearingMachineModels;
 namespace BearingMachineSimulation
 {
     public partial class Form1 : Form
     {
+        SimSys system;
         public Form1()
         {
             InitializeComponent();
+            system = new SimSys();
+            system.startSimulation("TestCase3.txt");
         }
     }
 }
