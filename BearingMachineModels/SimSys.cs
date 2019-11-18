@@ -23,10 +23,7 @@ namespace BearingMachineModels
         public void startSimulation(string fileName)
         {
             inputFromFile(fileName);
-            setBearingLifeDistribution();
-            setDelayTimeDIstribution();
         }
-
         void inputFromFile(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
@@ -55,36 +52,6 @@ namespace BearingMachineModels
                 DelayTimeDistribution[i].Probability = Int32.Parse(dd[1]);
             }
         }
-
-        void setBearingLifeDistribution()
-        {
-            Decimal C = 0;
-            int m = 1;
-            for (int i = 0; i < BearingLifeDistribution.Count; i++)
-            {
-                C += BearingLifeDistribution[i].Probability;
-                BearingLifeDistribution[i].CummProbability = C;
-                BearingLifeDistribution[i].MinRange = m;
-                BearingLifeDistribution[i].MaxRange = Decimal.ToInt32(C * 100);
-                m = BearingLifeDistribution[i].MaxRange + 1;
-            }
-        }
-
-        void setDelayTimeDIstribution()
-        {
-            Decimal C = 0;
-            int m = 1;
-            for (int i = 0; i < DelayTimeDistribution.Count; i++)
-            {
-                C += DelayTimeDistribution[i].Probability;
-                DelayTimeDistribution[i].CummProbability = C;
-                DelayTimeDistribution[i].MinRange = m;
-                DelayTimeDistribution[i].MaxRange = Decimal.ToInt32(C);
-                m = DelayTimeDistribution[i].MaxRange + 1;
-
-            }
-        }
-
 
     }
 }
