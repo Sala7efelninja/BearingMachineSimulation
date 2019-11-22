@@ -23,10 +23,7 @@ namespace BearingMachineModels
         public void startSimulation(string fileName)
         {
             inputFromFile(fileName);
-            setBearingLifeDistribution();
-            setDelayTimeDIstribution();
         }
-
         void inputFromFile(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
@@ -57,7 +54,7 @@ namespace BearingMachineModels
                 BearingLifeDistribution[i].Probability = Decimal.Parse(dd[1]);
             }
         }
-
+        
         void setBearingLifeDistribution()
         {
             Decimal C = 0;
@@ -95,6 +92,6 @@ namespace BearingMachineModels
 
             }
         }
-
+        
     }
 }
