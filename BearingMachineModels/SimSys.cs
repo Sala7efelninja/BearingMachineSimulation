@@ -38,21 +38,23 @@ namespace BearingMachineModels
             RepairTimeForOneBearing = Int32.Parse(lines[16]);
             RepairTimeForAllBearings = Int32.Parse(lines[19]);
             string[] dd;
-            //Filling Bearing Life Distribustio
-            for(int i=0;i<3;i++)
+
+            //Filling Dely Time Distribution
+            for (int i = 0; i < 3; i++)
             {
                 dd = lines[22 + i].Split(',');
-                BearingLifeDistribution.Add(new TimeDistribution());
-                BearingLifeDistribution[i].Time = Int32.Parse(dd[0]);
-                BearingLifeDistribution[i].Probability = Int32.Parse(dd[1]);
-            }
-            //Filling Dely Time Distribution
-            for (int i = 0;i< 10; i++)
-            {
-                dd = lines[22 + 2 + 3 + i].Split(',');
                 DelayTimeDistribution.Add(new TimeDistribution());
                 DelayTimeDistribution[i].Time = Int32.Parse(dd[0]);
-                DelayTimeDistribution[i].Probability = Int32.Parse(dd[1]);
+                DelayTimeDistribution[i].Probability = Decimal.Parse(dd[1]);
+            }
+
+            //Filling Bearing Life Distribustio
+            for (int i=0;i<10;i++)
+            {
+                dd = lines[22 + 2 + 3 + i].Split(',');
+                BearingLifeDistribution.Add(new TimeDistribution());
+                BearingLifeDistribution[i].Time = Int32.Parse(dd[0]);
+                BearingLifeDistribution[i].Probability = Decimal.Parse(dd[1]);
             }
         }
 
@@ -79,12 +81,20 @@ namespace BearingMachineModels
                 C += DelayTimeDistribution[i].Probability;
                 DelayTimeDistribution[i].CummProbability = C;
                 DelayTimeDistribution[i].MinRange = m;
-                DelayTimeDistribution[i].MaxRange = Decimal.ToInt32(C);
+                DelayTimeDistribution[i].MaxRange = Decimal.ToInt32(C*10);
                 m = DelayTimeDistribution[i].MaxRange + 1;
 
             }
         }
 
+        void runSimuation()
+        {
+            Random random = new Random();
+            for(int i=0;i < NumberOfHours; i++)
+            {
+
+            }
+        }
 
     }
 }
