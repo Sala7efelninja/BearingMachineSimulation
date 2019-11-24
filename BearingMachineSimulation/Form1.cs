@@ -19,6 +19,7 @@ namespace BearingMachineSimulation
             InitializeComponent();
             system = new SimSys();
             system.startSimulation("TestCase1.txt");
+
         }
     }
 }
