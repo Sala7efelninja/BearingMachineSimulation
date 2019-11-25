@@ -12,12 +12,8 @@ namespace BearingMachineModels
         {
 
         }
-        public int index { get; set; }
         public Bearing Bearing { get; set; }
-        public int BearingIndex {get;set; }
         public int AccumulatedHours { get; set; }
-        public int Hours { get; set; }
-        public int HoursR { get; set; }
         public int RandomDelay { get; set; }
         public int Delay { get; set; }        
     }

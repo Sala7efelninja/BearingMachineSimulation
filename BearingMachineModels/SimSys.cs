@@ -151,12 +151,9 @@ namespace BearingMachineModels
             currentSimulationCase.Bearing = getBearing(index, i); 
             b += currentSimulationCase.Bearing.Hours;
             currentSimulationCase.AccumulatedHours = b;
-            currentSimulationCase.RandomDelay = r.Next(1, 11);//#TODO it should be 0 , 9 ??
+            currentSimulationCase.RandomDelay = r.Next(1,11);//#TODO it should be 0 , 9 ??
             currentSimulationCase.Delay = getDelay(currentSimulationCase.RandomDelay);
-            currentSimulationCase.BearingIndex = currentSimulationCase.Bearing.Index;
-            currentSimulationCase.Hours = currentSimulationCase.Bearing.Hours;
-            currentSimulationCase.HoursR = currentSimulationCase.Bearing.RandomHours;
-            currentSimulationCase.index = i;
+            
             CurrentSimulationTable.Add(currentSimulationCase);
             return b;
         }
@@ -205,11 +202,10 @@ namespace BearingMachineModels
                     addRandomNumber(j, i);
                     proposedSimulationCase.Bearings.Add(getBearing(j, i));
                 }
-                
                 proposedSimulationCase.FirstFailure = getFirstFaliure(proposedSimulationCase.Bearings);
                 c += proposedSimulationCase.FirstFailure;
                 proposedSimulationCase.AccumulatedHours = c;
-                proposedSimulationCase.RandomDelay = r.Next(1, 11);
+                proposedSimulationCase.RandomDelay = r.Next(1,11);
                 proposedSimulationCase.Delay = getDelay(proposedSimulationCase.RandomDelay);
                 ProposedSimulationTable.Add(proposedSimulationCase);
             }
@@ -227,12 +223,12 @@ namespace BearingMachineModels
 
         private void calCurrentPerformanceMeasures()
         {
-            int noOfBearings = CurrentSimulationTable.Count ;
+            decimal noOfBearings = CurrentSimulationTable.Count ;
 
             CurrentPerformanceMeasures.BearingCost = noOfBearings * BearingCost;
             CurrentPerformanceMeasures.DelayCost = calCurrentDelayCost();
 
-            int downTime = noOfBearings * RepairTimeForOneBearing;//one Bearing down takes 20 mins
+            decimal downTime = noOfBearings * RepairTimeForOneBearing;//one Bearing down takes 20 mins
 
             CurrentPerformanceMeasures.DowntimeCost = downTime * DowntimeCost;
             CurrentPerformanceMeasures.RepairPersonCost = calRepaireCost(downTime);
@@ -240,12 +236,12 @@ namespace BearingMachineModels
         }
         private void calProposedPerformanceMeasures()
         {
-            int noOfBearings = ProposedSimulationTable.Count * NumberOfBearings;
+            decimal noOfBearings = ProposedSimulationTable.Count * NumberOfBearings;
 
             ProposedPerformanceMeasures.BearingCost = noOfBearings * BearingCost;
             ProposedPerformanceMeasures.DelayCost = calProposedDelayCost();
 
-            int downTime = ProposedSimulationTable.Count * RepairTimeForAllBearings; //one Bearing down takes 20 mins
+            decimal downTime = ProposedSimulationTable.Count * RepairTimeForAllBearings; //one Bearing down takes 20 mins
 
             ProposedPerformanceMeasures.DowntimeCost = downTime * DowntimeCost;
             ProposedPerformanceMeasures.RepairPersonCost = calRepaireCost(downTime);
@@ -254,22 +250,22 @@ namespace BearingMachineModels
 
         
 
-        private decimal calRepaireCost(int downtime)
+        private decimal calRepaireCost(decimal downtime)
         {
             return downtime * RepairPersonCost / 60;
         }
 
         
-        private int calProposedDelayCost()
+        private decimal calProposedDelayCost()
         {
-            int n = 0;
+            decimal n = 0;
             for (int i = 0; i < ProposedSimulationTable.Count; i++)
             {
                 n += ProposedSimulationTable[i].Delay;
             }
             return n* DowntimeCost;
         }
-        private int calCurrentDelayCost()
+        private decimal calCurrentDelayCost()
         {
             int n = 0;
             for (int i = 0; i < CurrentSimulationTable.Count; i++)

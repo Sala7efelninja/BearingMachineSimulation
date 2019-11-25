@@ -12,9 +12,10 @@ namespace BearingMachineModels
         {
             Bearings = new List<Bearing>();
         }
-
+        
         public List<Bearing> Bearings { get; set; }
         public int FirstFailure { get; set; }
+
         public int AccumulatedHours { get; set; }
         public int RandomDelay { get; set; }
         public int Delay { get; set; }
