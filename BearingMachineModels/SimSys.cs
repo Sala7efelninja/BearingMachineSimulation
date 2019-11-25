@@ -20,6 +20,8 @@ namespace BearingMachineModels
 
             ProposedSimulationTable = new List<ProposedSimulationCase>();
             ProposedPerformanceMeasures = new PerformanceMeasures();
+
+            randomHours = new List<List<int>>();
            
         }
         public void startSimulation(string fileName)
@@ -30,6 +32,8 @@ namespace BearingMachineModels
             generateRandomNumbers();
             runCurrentPolicy();
             runProposedPolicy();
+            calCurrentPerformanceMeasures();
+            calProposedPerformanceMeasures();
 
         }
         private void inputFromFile(string fileName)
@@ -94,28 +98,24 @@ namespace BearingMachineModels
 
         private void generateRandomNumbers()
         {
-            int b1, b2, b3;
-            b1 = b2 = b3 = 0;
-            Random r1 = new Random();
-            Random r2 = new Random();
-            Random r3 = new Random();
-            randomHours = new List<List<int>>(NumberOfBearings);
-            while (b1< NumberOfHours || b2< NumberOfHours || b3< NumberOfHours)
+            int[] b = new int[NumberOfBearings];
+            r=new Random();
+            bool done = false;
+            randomHours = new List<List<int>>();
+            for (int i = 0; i < NumberOfBearings; i++)
+                randomHours.Add(new List<int>());
+
+            while (!done)
             {
-                if(b1<NumberOfHours)
+                done = true;
+                for(int i=0;i<NumberOfBearings;i++)
                 {
-                    randomHours[0].Add(r1.Next(1, 100));
-                    b1 += getBearingLifeTime(randomHours[0][randomHours[0].Count-1]);
-                }
-                if(b2< NumberOfHours)
-                {
-                    randomHours[1].Add(r2.Next(1, 100));
-                    b2 += getBearingLifeTime(randomHours[1][randomHours[1].Count - 1]);
-                }
-                if (b3< NumberOfHours)
-                {
-                    randomHours[2].Add(r1.Next(1, 100));
-                    b3 += getBearingLifeTime(randomHours[2][randomHours[2].Count - 1]);
+                    if (b[i] < NumberOfHours)
+                    {
+                        done = false;
+                        randomHours[i].Add(r.Next(1, 101));
+                        b[i] += getBearingLifeTime(randomHours[i][randomHours[i].Count - 1]);
+                    }
                 }
             }
         }
@@ -127,24 +127,21 @@ namespace BearingMachineModels
 
         private void runCurrentPolicy()
         {
-            int b1 = 0, b2 = 0, b3 = 0;
+            int[] b=new int[NumberOfBearings];
+            bool done = false;
             r = new Random();
            
-            for (int i=0; b1 < NumberOfHours || b2 < NumberOfHours || b3 < NumberOfHours;i++) 
+            for (int i=0;!done;i++) 
             {
-                if (b1 < NumberOfHours)
+                done = true;
+                for(int j=0;j<NumberOfBearings;j++)
                 {
-                    b1 += replaceOneBearing(0, i, b1);
+                    if (b[j] < NumberOfHours)
+                    {
+                        done = false;
+                        b[j] = replaceOneBearing(j, i, b[j]);
+                    }
                 }
-                if(b2<NumberOfHours)
-                {
-                    b2 += replaceOneBearing(1, i, b2);
-                }
-                if(b3<NumberOfHours)
-                {
-                    b3 += replaceOneBearing(2, i, b3);
-                }
-
             }
         }
         private int replaceOneBearing(int index,int i,int b)
@@ -154,8 +151,12 @@ namespace BearingMachineModels
             currentSimulationCase.Bearing = getBearing(index, i); 
             b += currentSimulationCase.Bearing.Hours;
             currentSimulationCase.AccumulatedHours = b;
-            currentSimulationCase.RandomDelay = r.Next(1, 10);//#TODO it should be 0 , 9 ??
+            currentSimulationCase.RandomDelay = r.Next(1, 11);//#TODO it should be 0 , 9 ??
             currentSimulationCase.Delay = getDelay(currentSimulationCase.RandomDelay);
+            currentSimulationCase.BearingIndex = currentSimulationCase.Bearing.Index;
+            currentSimulationCase.Hours = currentSimulationCase.Bearing.Hours;
+            currentSimulationCase.HoursR = currentSimulationCase.Bearing.RandomHours;
+            currentSimulationCase.index = i;
             CurrentSimulationTable.Add(currentSimulationCase);
             return b;
         }
@@ -185,7 +186,10 @@ namespace BearingMachineModels
         }
         private int getFirstFaliure(List<Bearing> L)
         {
-            return Math.Min(L[0].Hours, Math.Min(L[1].Hours, L[2].Hours));
+            int min = int.MaxValue;
+            for (int i = 0; i < NumberOfBearings; i++)
+                min = Math.Min(min, L[i].Hours);
+            return min;
         }
 
         private void runProposedPolicy()
@@ -196,38 +200,83 @@ namespace BearingMachineModels
             {
                 // need to add more Random numbers
                 ProposedSimulationCase proposedSimulationCase = new ProposedSimulationCase();
-                proposedSimulationCase.Bearings.Add(getBearing(0, i));
-                proposedSimulationCase.Bearings.Add(getBearing(1, i));
-                proposedSimulationCase.Bearings.Add(getBearing(2, i));
-
+                for(int j=0;j<NumberOfBearings;j++)
+                {
+                    addRandomNumber(j, i);
+                    proposedSimulationCase.Bearings.Add(getBearing(j, i));
+                }
+                
                 proposedSimulationCase.FirstFailure = getFirstFaliure(proposedSimulationCase.Bearings);
                 c += proposedSimulationCase.FirstFailure;
                 proposedSimulationCase.AccumulatedHours = c;
-                proposedSimulationCase.RandomDelay = r.Next(1, 10);
+                proposedSimulationCase.RandomDelay = r.Next(1, 11);
                 proposedSimulationCase.Delay = getDelay(proposedSimulationCase.RandomDelay);
                 ProposedSimulationTable.Add(proposedSimulationCase);
             }
 
         }
 
+        private void addRandomNumber(int j, int i)
+        {
+            if(randomHours[j].Count<=i)
+            {
+               
+                randomHours[j].Add(r.Next(0, 101));
+            }
+        }
+
         private void calCurrentPerformanceMeasures()
         {
-            CurrentPerformanceMeasures.BearingCost = calBearingCost(CurrentSimulationTable.Count);
-            CurrentPerformanceMeasures.DelayCost = calDelayCost();
-            int n = calDowntime();
-            CurrentPerformanceMeasures.DowntimeCost = n * DowntimeCost;
-            CurrentPerformanceMeasures.RepairPersonCost = n * DowntimeCost;
+            int noOfBearings = CurrentSimulationTable.Count ;
+
+            CurrentPerformanceMeasures.BearingCost = noOfBearings * BearingCost;
+            CurrentPerformanceMeasures.DelayCost = calCurrentDelayCost();
+
+            int downTime = noOfBearings * RepairTimeForOneBearing;//one Bearing down takes 20 mins
+
+            CurrentPerformanceMeasures.DowntimeCost = downTime * DowntimeCost;
+            CurrentPerformanceMeasures.RepairPersonCost = calRepaireCost(downTime);
             CurrentPerformanceMeasures.TotalCost = calToatalCost(CurrentPerformanceMeasures);
         }
-
-        private decimal calDelayCost()
+        private void calProposedPerformanceMeasures()
         {
-            throw new NotImplementedException();
+            int noOfBearings = ProposedSimulationTable.Count * NumberOfBearings;
+
+            ProposedPerformanceMeasures.BearingCost = noOfBearings * BearingCost;
+            ProposedPerformanceMeasures.DelayCost = calProposedDelayCost();
+
+            int downTime = ProposedSimulationTable.Count * RepairTimeForAllBearings; //one Bearing down takes 20 mins
+
+            ProposedPerformanceMeasures.DowntimeCost = downTime * DowntimeCost;
+            ProposedPerformanceMeasures.RepairPersonCost = calRepaireCost(downTime);
+            ProposedPerformanceMeasures.TotalCost = calToatalCost(ProposedPerformanceMeasures);
         }
 
-        private int calDowntime()
+        
+
+        private decimal calRepaireCost(int downtime)
         {
-            throw new NotImplementedException();
+            return downtime * RepairPersonCost / 60;
+        }
+
+        
+        private int calProposedDelayCost()
+        {
+            int n = 0;
+            for (int i = 0; i < ProposedSimulationTable.Count; i++)
+            {
+                n += ProposedSimulationTable[i].Delay;
+            }
+            return n* DowntimeCost;
+        }
+        private int calCurrentDelayCost()
+        {
+            int n = 0;
+            for (int i = 0; i < CurrentSimulationTable.Count; i++)
+            {
+                n += CurrentSimulationTable[i].Delay;
+            }
+            return n* DowntimeCost;
         }
 
         private decimal calToatalCost(PerformanceMeasures performanceMeasures)
@@ -235,12 +284,6 @@ namespace BearingMachineModels
             return performanceMeasures.BearingCost + performanceMeasures.DelayCost + performanceMeasures.DowntimeCost + performanceMeasures.RepairPersonCost;
         }
 
-        
-        private decimal calBearingCost(int count)
-        {
-            return count*BearingCost;
-            
-        }
     }
 
 
