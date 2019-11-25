@@ -90,7 +90,7 @@ namespace BearingMachineModels
                 C += DelayTimeDistribution[i].Probability;
                 DelayTimeDistribution[i].CummProbability = C;
                 DelayTimeDistribution[i].MinRange = m;
-                DelayTimeDistribution[i].MaxRange = Decimal.ToInt32(C*10);
+                DelayTimeDistribution[i].MaxRange = Decimal.ToInt32(C*100);
                 m = DelayTimeDistribution[i].MaxRange + 1;
 
             }
@@ -113,7 +113,7 @@ namespace BearingMachineModels
                     if (b[i] < NumberOfHours)
                     {
                         done = false;
-                        randomHours[i].Add(r.Next(1, 101));
+                        randomHours[i].Add(r.Next(1, 100));
                         b[i] += getBearingLifeTime(randomHours[i][randomHours[i].Count - 1]);
                     }
                 }
@@ -151,7 +151,7 @@ namespace BearingMachineModels
             currentSimulationCase.Bearing = getBearing(index, i); 
             b += currentSimulationCase.Bearing.Hours;
             currentSimulationCase.AccumulatedHours = b;
-            currentSimulationCase.RandomDelay = r.Next(1, 11);//#TODO it should be 0 , 9 ??
+            currentSimulationCase.RandomDelay = r.Next(1, 100);//#TODO it should be 0 , 9 ??
             currentSimulationCase.Delay = getDelay(currentSimulationCase.RandomDelay);
             currentSimulationCase.BearingIndex = currentSimulationCase.Bearing.Index;
             currentSimulationCase.Hours = currentSimulationCase.Bearing.Hours;
@@ -209,7 +209,7 @@ namespace BearingMachineModels
                 proposedSimulationCase.FirstFailure = getFirstFaliure(proposedSimulationCase.Bearings);
                 c += proposedSimulationCase.FirstFailure;
                 proposedSimulationCase.AccumulatedHours = c;
-                proposedSimulationCase.RandomDelay = r.Next(1, 11);
+                proposedSimulationCase.RandomDelay = r.Next(1,100);
                 proposedSimulationCase.Delay = getDelay(proposedSimulationCase.RandomDelay);
                 ProposedSimulationTable.Add(proposedSimulationCase);
             }
