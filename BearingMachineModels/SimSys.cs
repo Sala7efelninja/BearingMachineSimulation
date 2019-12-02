@@ -22,6 +22,7 @@ namespace BearingMachineModels
             ProposedPerformanceMeasures = new PerformanceMeasures();
 
             randomHours = new List<List<int>>();
+            r = new Random();
            
         }
         public void startSimulation(string fileName)
@@ -99,7 +100,7 @@ namespace BearingMachineModels
         private void generateRandomNumbers()
         {
             int[] b = new int[NumberOfBearings];
-            r=new Random();
+
             bool done = false;
             randomHours = new List<List<int>>();
             for (int i = 0; i < NumberOfBearings; i++)
@@ -129,7 +130,7 @@ namespace BearingMachineModels
         {
             int[] b=new int[NumberOfBearings];
             bool done = false;
-            r = new Random();
+
            
             for (int i=0;!done;i++) 
             {
@@ -193,7 +194,7 @@ namespace BearingMachineModels
         private void runProposedPolicy()
         {
             int c = 0, hours = 0;
-            r = new Random();
+
             for(int i =0; c < NumberOfHours; i++)
             {
                 // need to add more Random numbers
